@@ -13,7 +13,7 @@ const PORT = process.env.PORT || 5000;
 // ✅ CORS КОНФИГ - ИСПРАВЛЕННЫЙ
 app.use(cors({
     origin: [
-        'https://ALBERT-tech.github.io',  // GitHub Pages (замени username!)
+        'https://albert-tech.github.io',  // GitHub Pages (замени username!)
         'http://localhost:5000',
         'http://localhost:3000',
         'http://127.0.0.1:5000',
