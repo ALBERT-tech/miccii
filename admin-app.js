@@ -432,7 +432,8 @@ function handleExportJSON() {
  * Утилита для скачивания файла
  */
 function downloadFile(content, filename, mimeType) {
-    const blob = new Blob([content], { type: mimeType });
+   const bom = '\uFEFF'; // BOM для UTF-8
+const blob = new Blob([bom + content], { type: 'text/csv;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
