@@ -1,0 +1,124 @@
+{
+  "version": "1.0",
+  "title": "Программа оценки риска недержания мочи",
+  "description": "Анонимный опросник для оценки параметров",
+  "questions": [
+    {
+      "id": "age",
+      "label": "Количество полных лет",
+      "type": "number",
+      "min": 18,
+      "max": 120,
+      "required": true,
+      "unit": ""
+    },
+    {
+      "id": "births",
+      "label": "Количество родов (указать количество, если не рожали - 0)",
+      "type": "number",
+      "min": 0,
+      "max": 12,
+      "required": true,
+      "unit": ""
+    },
+    {
+      "id": "weight_kg",
+      "label": "Масса тела",
+      "type": "number",
+      "min": 35,
+      "max": 250,
+      "required": true,
+      "unit": "кг"
+    },
+    {
+      "id": "height_cm",
+      "label": "Рост",
+      "type": "number",
+      "min": 120,
+      "max": 220,
+      "required": true,
+      "unit": "см"
+    },
+    {
+      "id": "waist_circumference",
+      "label": "Окружность талии",
+      "type": "number",
+      "min": 45,
+      "max": 150,
+      "required": true,
+      "unit": "см"
+    },
+    {
+      "id": "daytime_micturitions",
+      "label": "Количество дневных мочеиспусканий",
+      "type": "number",
+      "min": 0,
+      "max": 100,
+      "required": true,
+      "unit": ""
+    },
+    {
+      "id": "nighttime_micturitions",
+      "label": "Количество ночных мочеиспусканий",
+      "type": "number",
+      "min": 0,
+      "max": 100,
+      "required": true,
+      "unit": ""
+    },
+    {
+      "id": "fluid_intake_ml",
+      "label": "Объём выпитой жидкости в день",
+      "type": "number",
+      "min": 0,
+      "max": 10000,
+      "required": true,
+      "unit": "мл"
+    },
+    {
+      "id": "urine_output_ml",
+      "label": "Объём выделенной мочи в день",
+      "type": "number",
+      "min": 0,
+      "max": 10000,
+      "required": true,
+      "unit": "мл"
+    },
+    {
+      "id": "urgent_urges",
+      "label": "Количество неотложных позывов",
+      "type": "number",
+      "min": 0,
+      "max": 40,
+      "required": true,
+      "unit": ""
+    },
+    {
+      "id": "incontinence_episodes",
+      "label": "Количество эпизодов неудержания мочи в сутки",
+      "type": "number",
+      "min": 0,
+      "max": 30,
+      "required": true,
+      "unit": ""
+    },
+    {
+      "id": "pads_per_day",
+      "label": "Количество дневных прокладок за сутки",
+      "type": "number",
+      "min": 0,
+      "max": 20,
+      "required": true,
+      "unit": ""
+    },
+    {
+      "id": "childhood_enuresis",
+      "label": "Энурез в детстве (указать возраст окончания, если не было - 0)",
+      "type": "number",
+      "min": 0,
+      "max": 18,
+      "required": true,
+      "unit": "лет"
+    }
+  ]
+}

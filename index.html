@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Оценка риска недержания мочи</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app" class="app-container">
+        <!-- Стартовый экран: ввод шифра -->
+        <div id="screen-start" class="screen active">
+            <div class="screen-content">
+                <h1>Программа оценки риска недержания мочи</h1>
+                <p class="subtitle">Анонимный опросник</p>
+                
+                <form id="start-form" class="form">
+                    <div class="form-group">
+                        <label for="code-input">Ваш индивидуальный номер (шифр):</label>
+                        <input 
+                            type="text" 
+                            id="code-input" 
+                            name="code" 
+                            placeholder="Введите шифр"
+                            required
+                            maxlength="50"
+                        >
+                        <div id="code-error" class="error-message"></div>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Начать</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Экран опросника -->
+        <div id="screen-survey" class="screen">
+            <div class="screen-content">
+                <div class="survey-header">
+                    <h1>Оценка риска недержания мочи</h1>
+                    <div class="progress-bar">
+                        <div id="progress-fill" class="progress-fill"></div>
+                    </div>
+                    <p class="progress-text">
+                        <span id="current-question">1</span> / <span id="total-questions">13</span>
+                    </p>
+                </div>
+
+                <form id="survey-form" class="form survey-form">
+                    <div id="questions-container" class="questions-container"></div>
+                    
+                    <div class="survey-buttons">
+                        <button type="button" id="btn-prev" class="btn btn-secondary" style="display: none;">← Назад</button>
+                        <button type="button" id="btn-next" class="btn btn-primary">Далее →</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Экран успеха -->
+        <div id="screen-success" class="screen">
+            <div class="screen-content">
+                <div class="success-container">
+                    <div class="success-icon">✓</div>
+                    <h1>Спасибо!</h1>
+                    <p>Ваши данные успешно отправлены.</p>
+                    <p class="subtitle">Ваш шифр: <strong id="success-code"></strong></p>
+                    <button type="button" id="btn-new-survey" class="btn btn-primary">Начать новый опрос</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Экран ошибки -->
+        <div id="screen-error" class="screen">
+            <div class="screen-content">
+                <div class="error-container">
+                    <div class="error-icon">✕</div>
+                    <h1>Ошибка</h1>
+                    <p id="error-message"></p>
+                    <button type="button" class="btn btn-primary" onclick="location.reload()">Назад</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
