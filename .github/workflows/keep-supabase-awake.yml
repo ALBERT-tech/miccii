@@ -1,11 +1,15 @@
 name: Keep Supabase Awake
 
-# Будит бесплатную базу Supabase, чтобы она не засыпала после 7 дней простоя.
-# Запуск каждые 2 дня + кнопка ручного запуска (вкладка Actions → Run workflow).
+# Будит бесплатную базу Supabase (опросник miccii), чтобы не засыпала после 7 дней простоя.
+# Усилено 2026-06-10 синхронно с Medtest (туда пришло письмо-предупреждение от Supabase
+# несмотря на пинги раз в 2 дня): теперь запуск КАЖДЫЙ ДЕНЬ, три читающих запроса
+# и один ПИШУЩИЙ — перезапись метки времени в таблице keepalive (создаётся отдельным SQL,
+# см. Downloads/supabase-keepalive-table.sql; пока таблицы нет — шаг даст warning, не упадёт).
+# Ручная кнопка: вкладка Actions → Run workflow.
 
 on:
   schedule:
-    - cron: '17 6 */2 * *'   # каждые 2 дня, 06:17 UTC (≈09:17 МСК)
+    - cron: '17 6 * * *'   # каждый день, 06:17 UTC (≈09:17 МСК)
   workflow_dispatch: {}
 
 permissions:
@@ -18,18 +22,51 @@ jobs:
       - name: Checkout репозитория
         uses: actions/checkout@v4
 
-      - name: Пинг Supabase REST API
+      - name: Пинг Supabase (3 чтения + 1 запись)
         run: |
-          echo "Дёргаем Supabase, чтобы сбросить таймер простоя"
-          CODE=$(curl -s -o /tmp/resp.txt -w "%{http_code}" \
-            "https://btfqcxwbctbazgyomhjy.supabase.co/rest/v1/responses?select=id&limit=1" \
-            -H "apikey: sb_publishable_LV6GidJ-BJT1v1ReNKaQVA_j_HGkxDh" \
-            -H "Authorization: Bearer sb_publishable_LV6GidJ-BJT1v1ReNKaQVA_j_HGkxDh")
-          echo "Ответ Supabase: HTTP $CODE"
-          cat /tmp/resp.txt || true
-          echo
-          if [ "$CODE" = "000" ] || [ "$CODE" -ge 500 ]; then
-            echo "::error::Supabase не ответил (HTTP $CODE)"
+          BASE="https://btfqcxwbctbazgyomhjy.supabase.co"
+          APIKEY="sb_publishable_LV6GidJ-BJT1v1ReNKaQVA_j_HGkxDh"
+
+          echo "1) REST: SELECT одной строки из responses"
+          CODE1=$(curl -s -o /tmp/r1.txt -w "%{http_code}" \
+            "$BASE/rest/v1/responses?select=id&limit=1" \
+            -H "apikey: $APIKEY" \
+            -H "Authorization: Bearer $APIKEY")
+          echo "HTTP $CODE1"; cat /tmp/r1.txt || true; echo
+
+          echo "2) REST: COUNT строк в responses"
+          CODE2=$(curl -s -o /tmp/r2.txt -w "%{http_code}" \
+            "$BASE/rest/v1/responses?select=id" \
+            -H "apikey: $APIKEY" \
+            -H "Authorization: Bearer $APIKEY" \
+            -H "Prefer: count=exact" \
+            -H "Range: 0-0")
+          echo "HTTP $CODE2"; echo
+
+          echo "3) Auth health"
+          CODE3=$(curl -s -o /tmp/r3.txt -w "%{http_code}" \
+            "$BASE/auth/v1/health" \
+            -H "apikey: $APIKEY")
+          echo "HTTP $CODE3"; cat /tmp/r3.txt || true; echo
+
+          echo "4) WRITE: перезаписываем метку времени в keepalive"
+          TS=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          CODE4=$(curl -s -o /tmp/r4.txt -w "%{http_code}" -X PATCH \
+            "$BASE/rest/v1/keepalive?id=eq.1" \
+            -H "apikey: $APIKEY" \
+            -H "Authorization: Bearer $APIKEY" \
+            -H "Content-Type: application/json" \
+            -H "Prefer: return=representation" \
+            -d "{\"last_ping\": \"$TS\"}")
+          echo "HTTP $CODE4"; cat /tmp/r4.txt || true; echo
+          if [ "$CODE4" = "200" ] && grep -q "last_ping" /tmp/r4.txt; then
+            echo "Write-пинг прошёл: $TS"
+          else
+            echo "::warning::Write-пинг не прошёл (HTTP $CODE4). Создана ли таблица keepalive? SQL лежит в Downloads/supabase-keepalive-table.sql"
+          fi
+
+          if [ "$CODE1" = "000" ] || [ "$CODE1" -ge 500 ]; then
+            echo "::error::Supabase не ответил (HTTP $CODE1)"
             exit 1
           fi
 
